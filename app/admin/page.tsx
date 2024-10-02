@@ -1,6 +1,8 @@
 import {AdminDashboard} from "@/components/admin-dashboard";
 import {SocietyEvent} from "@/app/types/SocietyEvent";
 import {EventAnalyticsData} from "@/app/types/EventAnalyticsData";
+import {redirect} from "next/navigation";
+import {cookies} from "next/headers";
 
 export default function AdminPage() {
     const initialEvents: SocietyEvent[] = [
@@ -17,6 +19,13 @@ export default function AdminPage() {
         { name: 'May', tickets: 189, revenue: 9450 },
         { name: 'Jun', tickets: 239, revenue: 11950 },
     ]
+
+    const cookieStore = cookies()
+    const isAuthenticated = cookieStore.get('auth')?.value === 'true'
+
+    if (!isAuthenticated) {
+        redirect('/signin')
+    }
 
     return (
         <div>

@@ -19,6 +19,8 @@ import {
     ChartLegendContent
 } from "@/components/ui/chart"
 import { Line, LineChart, XAxis, YAxis } from "recharts"
+import Link from "next/link";
+import {SignOutButton} from "@/components/sign-out-button";
 
 interface AdminDashboardProps {
     initialEvents: SocietyEvent[]
@@ -32,7 +34,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
     const [isAddEventOpen, setIsAddEventOpen] = useState(false)
     const [isEditEventOpen, setIsEditEventOpen] = useState(false)
 
-    const defualtEvent: SocietyEvent = {
+    const defaultEvent: SocietyEvent = {
         id: 12345,
         name: "",
         description: "",
@@ -45,6 +47,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
         questions: [],
         attendees: []
     }
+
     const handleAddEvent = () => {
         if (newEvent) {
             setEvents([...events, newEvent])
@@ -83,7 +86,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-
+            <SignOutButton/>
             <Button onClick={() => setIsAddEventOpen(true)} className="mb-4">Add New Event</Button>
 
             <Dialog open={isAddEventOpen} onOpenChange={setIsAddEventOpen}>
@@ -92,7 +95,8 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
                         <DialogTitle>Add New Event</DialogTitle>
                         <DialogDescription>Fill in the details for a new event</DialogDescription>
                     </DialogHeader>
-                    <EventForm isEditing={false} event={newEvent ?? defualtEvent} setEditingEvent={setEditingEvent} setNewEvent={setNewEvent}/>
+                    <EventForm isEditing={false} event={newEvent ?? defaultEvent} setEditingEvent={setEditingEvent}
+                               setNewEvent={setNewEvent}/>
                     <DialogFooter>
                         <Button onClick={handleAddEvent}>Add Event</Button>
                     </DialogFooter>
@@ -105,7 +109,8 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
                         <DialogTitle>Edit Event</DialogTitle>
                         <DialogDescription>Update the event details</DialogDescription>
                     </DialogHeader>
-                    <EventForm isEditing={true} event={editingEvent ?? defualtEvent} setEditingEvent={setEditingEvent} setNewEvent={setNewEvent}/>
+                    <EventForm isEditing={true} event={editingEvent ?? defaultEvent} setEditingEvent={setEditingEvent}
+                               setNewEvent={setNewEvent}/>
                     <DialogFooter>
                         <Button onClick={handleUpdateEvent}>Update Event</Button>
                     </DialogFooter>
@@ -139,8 +144,14 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
                                     <TableCell>{event.ticketsLeft}</TableCell>
                                     <TableCell>
                                         <div className="flex space-x-2">
-                                            <Button variant="outline" onClick={() => handleEditEvent(event)}>Edit</Button>
-                                            <Button variant="outline" onClick={() => handleShareEvent(event)}><Share2 className="h-4 w-4" /></Button>
+                                            <Link href={`/events/${event.id}`} rel="noopener noreferrer"
+                                                  target="_blank">
+                                                <Button variant="outline">View</Button>
+                                            </Link>
+                                            <Button variant="outline"
+                                                    onClick={() => handleEditEvent(event)}>Edit</Button>
+                                            <Button variant="outline" onClick={() => handleShareEvent(event)}><Share2
+                                                className="h-4 w-4"/></Button>
                                             <Dialog>
                                                 <DialogTrigger asChild>
                                                     <Button variant="destructive">Delete</Button>
@@ -149,12 +160,15 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
                                                     <DialogHeader>
                                                         <DialogTitle>Are you sure?</DialogTitle>
                                                         <DialogDescription>
-                                                            This action cannot be undone. This will permanently delete the event.
+                                                            This action cannot be undone. This will permanently delete
+                                                            the event.
                                                         </DialogDescription>
                                                     </DialogHeader>
                                                     <DialogFooter>
-                                                        <Button variant="outline" onClick={() => {}}>Cancel</Button>
-                                                        <Button variant="destructive" onClick={() => handleDeleteEvent(event.id)}>Delete</Button>
+                                                        <Button variant="outline" onClick={() => {
+                                                        }}>Cancel</Button>
+                                                        <Button variant="destructive"
+                                                                onClick={() => handleDeleteEvent(event.id)}>Delete</Button>
                                                     </DialogFooter>
                                                 </DialogContent>
                                             </Dialog>
@@ -187,8 +201,8 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex items-center space-x-2">
-                                        <Input placeholder="Enter ticket ID or scan QR code" />
-                                        <Button><QrCode className="h-4 w-4 mr-2" /> Scan</Button>
+                                        <Input placeholder="Enter ticket ID or scan QR code"/>
+                                        <Button><QrCode className="h-4 w-4 mr-2"/> Scan</Button>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -245,7 +259,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
                                                 strokeWidth={2}
                                                 activeDot={{
                                                     r: 6,
-                                                    style: { fill: "hsl(var(--primary))", opacity: 0.8 },
+                                                    style: {fill: "hsl(var(--primary))", opacity: 0.8},
                                                 }}
                                             />
                                             <Line
@@ -255,11 +269,11 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
                                                 strokeWidth={2}
                                                 activeDot={{
                                                     r: 6,
-                                                    style: { fill: "hsl(var(--secondary))", opacity: 0.8 },
+                                                    style: {fill: "hsl(var(--secondary))", opacity: 0.8},
                                                 }}
                                             />
-                                            <ChartTooltip content={<ChartTooltipContent />} />
-                                            <ChartLegend content={<ChartLegendContent />} />
+                                            <ChartTooltip content={<ChartTooltipContent/>}/>
+                                            <ChartLegend content={<ChartLegendContent/>}/>
                                         </LineChart>
                                     </ChartContainer>
                                 </CardContent>
@@ -289,7 +303,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, eventAn
                                                     <TableCell>{attendee.ticketId}</TableCell>
                                                     <TableCell>
                                                         <Button variant="outline" size="sm">
-                                                            <ClipboardList className="h-4 w-4 mr-2" />
+                                                            <ClipboardList className="h-4 w-4 mr-2"/>
                                                             View Answers
                                                         </Button>
                                                     </TableCell>
