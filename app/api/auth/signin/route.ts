@@ -5,10 +5,8 @@ async function authenticateUser(email: string, password: string) {
     const validEmail = 'admin@example.com'
     const validPassword = 'password123'
 
-    if (email === validEmail && password === validPassword) {
-        return true
-    }
-    return false
+    return email === validEmail && password === validPassword;
+
 }
 
 export async function POST(request: Request) {
