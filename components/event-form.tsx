@@ -51,6 +51,7 @@ export const EventForm: FC<EventFormProps> = ({ isEditing, event, setEditingEven
     }
 
     const handleFileSelect = (file: File | null) => {
+        if(file) console.log(file?.name);
         // setNewEventImage(file)
         // handleInputChange('image', file)
     }
