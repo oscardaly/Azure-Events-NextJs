@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
 export async function POST() {
-    cookies().set('auth', '', {
+    const cookieStore = await cookies()
+    cookieStore.set('auth', '', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -13,8 +14,8 @@ export async function POST() {
 }
 
 export async function GET() {
-    // This handles direct GET requests to /api/auth/signout
-    cookies().set('auth', '', {
+    const cookieStore = await cookies()
+    cookieStore.set('auth', '', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',

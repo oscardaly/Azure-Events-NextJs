@@ -1,11 +1,12 @@
-import {notFound} from 'next/navigation'
+import {notFound,} from 'next/navigation'
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import Image from "next/image";
 import {getEventById} from "@/app/api/events/rest";
 
-export default async function EventPage({params}: { params: { id: string } }) {
-    const event = await getEventById(params.id);
+export default async function EventPage({ params }: { params: Promise<{ id: string }> })  {
+    const eventId = (await params).id
+    const event = await getEventById(eventId);
 
     if (!event) {
         notFound()

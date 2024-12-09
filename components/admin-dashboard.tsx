@@ -12,14 +12,17 @@ import {EventForm} from "@/components/event-form";
 import Link from "next/link";
 import {SignOutButton} from "@/components/sign-out-button";
 import {deleteEventById, getEvents, updateEvent} from "@/app/api/events/rest";
+import {Ticket} from "@/app/types/Ticket";
 
 interface AdminDashboardProps {
     initialEvents: SocietyEvent[]
-    eventAnalyticsData?: EventAnalyticsData[]
+    eventAnalyticsData?: EventAnalyticsData[],
+    initialTickets: Ticket[]
 }
 
-export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents }) => {
+export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, initialTickets }) => {
     const [events, setEvents] = useState<SocietyEvent[]>(initialEvents);
+    const [tickets] = useState<Ticket[]>(initialTickets);
     const [newEvent, setNewEvent] = useState<SocietyEvent | undefined>(undefined);
     const [editingEvent, setEditingEvent] = useState<SocietyEvent | undefined>(undefined);
     const [isAddEventOpen, setIsAddEventOpen] = useState(false);
@@ -182,143 +185,34 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents }) => {
                     </Table>
                 </CardContent>
             </Card>
-
-            {/*<Card className="mt-8">*/}
-            {/*    <CardHeader>*/}
-            {/*        <CardTitle>Event Details</CardTitle>*/}
-            {/*        <CardDescription>Manage individual event details</CardDescription>*/}
-            {/*    </CardHeader>*/}
-            {/*    <CardContent>*/}
-            {/*        <Tabs defaultValue="entry">*/}
-            {/*            <TabsList>*/}
-            {/*                <TabsTrigger value="entry">Entry Manager</TabsTrigger>*/}
-            {/*                <TabsTrigger value="analytics">Analytics</TabsTrigger>*/}
-            {/*                <TabsTrigger value="attendees">Attendees</TabsTrigger>*/}
-            {/*            </TabsList>*/}
-            {/*            <TabsContent value="entry">*/}
-            {/*                <Card>*/}
-            {/*                    <CardHeader>*/}
-            {/*                        <CardTitle>Entry Manager</CardTitle>*/}
-            {/*                        <CardDescription>Scan QR codes to check ticket validity</CardDescription>*/}
-            {/*                    </CardHeader>*/}
-            {/*                    <CardContent>*/}
-            {/*                        <div className="flex items-center space-x-2">*/}
-            {/*                            <Input placeholder="Enter ticket ID or scan QR code"/>*/}
-            {/*                            <Button><QrCode className="h-4 w-4 mr-2"/> Scan</Button>*/}
-            {/*                        </div>*/}
-            {/*                    </CardContent>*/}
-            {/*                </Card>*/}
-            {/*            </TabsContent>*/}
-            {/*            <TabsContent value="analytics">*/}
-            {/*                <Card>*/}
-            {/*                    <CardHeader>*/}
-            {/*                        <CardTitle>Event Analytics</CardTitle>*/}
-            {/*                        <CardDescription>View ticket sales and revenue</CardDescription>*/}
-            {/*                    </CardHeader>*/}
-            {/*                    <CardContent>*/}
-            {/*                        <ChartContainer*/}
-            {/*                            className="h-[300px]"*/}
-            {/*                            config={{*/}
-            {/*                                tickets: {*/}
-            {/*                                    label: "Tickets Sold",*/}
-            {/*                                    color: "hsl(var(--primary))",*/}
-            {/*                                },*/}
-            {/*                                revenue: {*/}
-            {/*                                    label: "Revenue",*/}
-            {/*                                    color: "hsl(var(--secondary))",*/}
-            {/*                                },*/}
-            {/*                            }}*/}
-            {/*                        >*/}
-            {/*                            <LineChart data={eventAnalyticsData}>*/}
-            {/*                                <XAxis*/}
-            {/*                                    dataKey="name"*/}
-            {/*                                    stroke="#888888"*/}
-            {/*                                    fontSize={12}*/}
-            {/*                                    tickLine={false}*/}
-            {/*                                    axisLine={false}*/}
-            {/*                                />*/}
-            {/*                                <YAxis*/}
-            {/*                                    yAxisId="left"*/}
-            {/*                                    stroke="#888888"*/}
-            {/*                                    fontSize={12}*/}
-            {/*                                    tickLine={false}*/}
-            {/*                                    axisLine={false}*/}
-            {/*                                    tickFormatter={(value) => `${value}`}*/}
-            {/*                                />*/}
-            {/*                                <YAxis*/}
-            {/*                                    yAxisId="right"*/}
-            {/*                                    orientation="right"*/}
-            {/*                                    stroke="#888888"*/}
-            {/*                                    fontSize={12}*/}
-            {/*                                    tickLine={false}*/}
-            {/*                                    axisLine={false}*/}
-            {/*                                    tickFormatter={(value) => `$${value}`}*/}
-            {/*                                />*/}
-            {/*                                <Line*/}
-            {/*                                    yAxisId="left"*/}
-            {/*                                    type="monotone"*/}
-            {/*                                    dataKey="tickets"*/}
-            {/*                                    strokeWidth={2}*/}
-            {/*                                    activeDot={{*/}
-            {/*                                        r: 6,*/}
-            {/*                                        style: {fill: "hsl(var(--primary))", opacity: 0.8},*/}
-            {/*                                    }}*/}
-            {/*                                />*/}
-            {/*                                <Line*/}
-            {/*                                    yAxisId="right"*/}
-            {/*                                    type="monotone"*/}
-            {/*                                    dataKey="revenue"*/}
-            {/*                                    strokeWidth={2}*/}
-            {/*                                    activeDot={{*/}
-            {/*                                        r: 6,*/}
-            {/*                                        style: {fill: "hsl(var(--secondary))", opacity: 0.8},*/}
-            {/*                                    }}*/}
-            {/*                                />*/}
-            {/*                                <ChartTooltip content={<ChartTooltipContent/>}/>*/}
-            {/*                                <ChartLegend content={<ChartLegendContent/>}/>*/}
-            {/*                            </LineChart>*/}
-            {/*                        </ChartContainer>*/}
-            {/*                    </CardContent>*/}
-            {/*                </Card>*/}
-            {/*            </TabsContent>*/}
-            {/*            <TabsContent value="attendees">*/}
-            {/*                <Card>*/}
-            {/*                    <CardHeader>*/}
-            {/*                        <CardTitle>Attendee List</CardTitle>*/}
-            {/*                        <CardDescription>View and manage event attendees</CardDescription>*/}
-            {/*                    </CardHeader>*/}
-            {/*                    <CardContent>*/}
-            {/*                        <Table>*/}
-            {/*                            <TableHeader>*/}
-            {/*                                <TableRow>*/}
-            {/*                                    <TableHead>Name</TableHead>*/}
-            {/*                                    <TableHead>Email</TableHead>*/}
-            {/*                                    <TableHead>Ticket ID</TableHead>*/}
-            {/*                                    <TableHead>Questions</TableHead>*/}
-            {/*                                </TableRow>*/}
-            {/*                            </TableHeader>*/}
-            {/*                            <TableBody>*/}
-            {/*                                {events[0].attendees.map((attendee, index) => (*/}
-            {/*                                    <TableRow key={index}>*/}
-            {/*                                        <TableCell>{attendee.name}</TableCell>*/}
-            {/*                                        <TableCell>{attendee.email}</TableCell>*/}
-            {/*                                        <TableCell>{attendee.ticketId}</TableCell>*/}
-            {/*                                        <TableCell>*/}
-            {/*                                            <Button variant="outline" size="sm">*/}
-            {/*                                                <ClipboardList className="h-4 w-4 mr-2"/>*/}
-            {/*                                                View Answers*/}
-            {/*                                            </Button>*/}
-            {/*                                        </TableCell>*/}
-            {/*                                    </TableRow>*/}
-            {/*                                ))}*/}
-            {/*                            </TableBody>*/}
-            {/*                        </Table>*/}
-            {/*                    </CardContent>*/}
-            {/*                </Card>*/}
-            {/*            </TabsContent>*/}
-            {/*        </Tabs>*/}
-            {/*    </CardContent>*/}
-            {/*</Card>*/}
+            <Card className="mt-10">
+                <CardHeader>
+                    <CardTitle>Tickets List</CardTitle>
+                    <CardDescription>Manage your Tickets</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Id</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Event Name</TableHead>
+                                <TableHead>Event Date</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {tickets.map((ticket) => (
+                                <TableRow key={ticket.id}>
+                                    <TableCell>{ticket.id}</TableCell>
+                                    <TableCell>{ticket.userEmail}</TableCell>
+                                    <TableCell>{ticket.eventName}</TableCell>
+                                    <TableCell>{ticket.eventDate}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
         </div>
     )
 }

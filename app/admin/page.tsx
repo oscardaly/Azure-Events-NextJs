@@ -4,9 +4,12 @@ import {EventAnalyticsData} from "@/app/types/EventAnalyticsData";
 import {redirect} from "next/navigation";
 import {cookies} from "next/headers";
 import {getEvents} from "@/app/api/events/rest";
+import {getTickets} from "@/app/api/tickets/rest";
+import {Ticket} from "@/app/types/Ticket";
 
 export default async function AdminPage() {
     const initialEvents: SocietyEvent[] = await getEvents();
+    const initialTickets: Ticket[] = await getTickets();
 
     const analyticsData: EventAnalyticsData[] = [
         { name: 'Jan', tickets: 400, revenue: 20000 },
@@ -17,8 +20,9 @@ export default async function AdminPage() {
         { name: 'Jun', tickets: 239, revenue: 11950 },
     ]
 
-    const cookieStore = cookies()
-    const isAuthenticated = cookieStore.get('auth')?.value === 'true'
+    const cookieStore = await cookies()
+    const authCookie = cookieStore.get('auth')
+    const isAuthenticated = authCookie?.value === 'true'
 
     if (!isAuthenticated) {
         redirect('/signin')
@@ -26,7 +30,7 @@ export default async function AdminPage() {
 
     return (
         <div>
-            <AdminDashboard initialEvents={initialEvents} eventAnalyticsData={analyticsData}/>
+            <AdminDashboard initialEvents={initialEvents} initialTickets={initialTickets} eventAnalyticsData={analyticsData}/>
         </div>
     )
 }
