@@ -3,13 +3,10 @@ import {SocietyEvent} from "@/app/types/SocietyEvent";
 import {EventAnalyticsData} from "@/app/types/EventAnalyticsData";
 import {redirect} from "next/navigation";
 import {cookies} from "next/headers";
+import {getEvents} from "@/app/api/events/rest";
 
-export default function AdminPage() {
-    const initialEvents: SocietyEvent[] = [
-        { id: 1, name: 'Summer Music Festival', date: '2023-07-15', time: '14:00', price: 50, ticketsLeft: 1000, location: 'Central Park, New York', description: 'Join us for a day of amazing music performances across multiple stages in the heart of New York City.', image: '/placeholder.svg?height=400&width=600', questions: ['Dietary requirements?'], attendees: [] },
-        { id: 2, name: 'Tech Conference 2023', date: '2023-08-22', time: '09:00', price: 100, ticketsLeft: 200, location: 'Convention Center, San Francisco', description: 'Explore the latest in technology trends, hear from industry leaders, and network with professionals from around the world.', image: '/placeholder.svg?height=400&width=600', questions: ['T-shirt size?'], attendees: [] },
-        { id: 3, name: 'Food & Wine Expo', date: '2023-09-10', time: '11:00', price: 75, ticketsLeft: 500, location: 'Exhibition Hall, Chicago', description: 'Indulge in a culinary adventure featuring top chefs, wine tastings, and gourmet food samples from around the globe.', image: '/placeholder.svg?height=400&width=600', questions: ['Favorite cuisine?'], attendees: [] },
-    ]
+export default async function AdminPage() {
+    const initialEvents: SocietyEvent[] = await getEvents();
 
     const analyticsData: EventAnalyticsData[] = [
         { name: 'Jan', tickets: 400, revenue: 20000 },

@@ -5,6 +5,7 @@ import {FC, useState} from "react";
 import {SocietyEvent} from "@/app/types/SocietyEvent";
 import {Textarea} from "@/components/ui/textarea";
 import {FileUpload} from "@/components/file-upload";
+import {prepareBase64Content} from "@/app/api/events/rest";
 
 interface EventFormProps {
     isEditing: boolean,
@@ -48,12 +49,6 @@ export const EventForm: FC<EventFormProps> = ({ isEditing, event, setEditingEven
             updatedQuestions.splice(index, 1)
             setNewEvent({ ...event, questions: updatedQuestions })
         }
-    }
-
-    const handleFileSelect = (file: File | null) => {
-        if(file) console.log(file?.name);
-        // setNewEventImage(file)
-        // handleInputChange('image', file)
     }
 
     return (
@@ -119,7 +114,15 @@ export const EventForm: FC<EventFormProps> = ({ isEditing, event, setEditingEven
                 />
             </div>
             <div className="flex flex-col space-y-1.5 col-span-4">
-                <FileUpload onFileSelect={handleFileSelect}/>
+                <FileUpload
+                    onChange={ async (file): Promise<void> => {
+                    let fileAsBase64: string = "";
+
+                    if (file)
+                        fileAsBase64 = await prepareBase64Content(file);
+
+                    handleInputChange('filePath', fileAsBase64);
+                }}/>
             </div>
             <div className="flex flex-col space-y-1.5 col-span-4">
                 <Label htmlFor="questions">Questions</Label>

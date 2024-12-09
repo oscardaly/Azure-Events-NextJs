@@ -1,6 +1,6 @@
 import {EventsDashboard} from "@/components/events-dashboard";
-import {events} from "@/app/types/SocietyEvent";
+import {getEvents} from "@/app/api/events/rest";
 
-export default function Page() {
-  return <EventsDashboard events={events}/>
+export default async function Page() {
+  return <EventsDashboard events={await getEvents()}/>
 }

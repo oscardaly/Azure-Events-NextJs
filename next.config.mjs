@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'nextupeventdata.blob.core.windows.net',
+                port: '',
+                pathname: '/images/**',
+            },
+        ],
+    },
     async rewrites() {
         return [
             {

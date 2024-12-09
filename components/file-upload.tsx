@@ -4,14 +4,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, Trash2 } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import {FC, useRef, useState} from "react";
+import { FC, useRef, useState} from "react";
 
 interface FileUploadProps {
-    onFileSelect: (file: File | null) => void
+    onChange: (file: File | undefined) => void
     initialPreview?: string
 }
 
-export const FileUpload: FC<FileUploadProps> = ({ onFileSelect, initialPreview }: FileUploadProps) => {
+export const FileUpload: FC<FileUploadProps> = ({ onChange, initialPreview }: FileUploadProps) => {
     const [preview, setPreview] = useState<string | null>(initialPreview || null)
     const [error, setError] = useState<string | null>(null)
     const [fileType, setFileType] = useState<'image' | 'video' | null>(null)
@@ -26,13 +26,13 @@ export const FileUpload: FC<FileUploadProps> = ({ onFileSelect, initialPreview }
                     setPreview(reader.result as string)
                 }
                 reader.readAsDataURL(file)
-                onFileSelect(file)
+                onChange(file)
                 setError(null)
                 setFileType(file.type.startsWith('image/') ? 'image' : 'video')
             } else {
                 setError('Please select an image or video file.')
                 setPreview(null)
-                onFileSelect(null)
+                onChange(undefined)
                 setFileType(null)
             }
         }
@@ -52,13 +52,13 @@ export const FileUpload: FC<FileUploadProps> = ({ onFileSelect, initialPreview }
                     setPreview(reader.result as string)
                 }
                 reader.readAsDataURL(file)
-                onFileSelect(file)
+                onChange(file)
                 setError(null)
                 setFileType(file.type.startsWith('image/') ? 'image' : 'video')
             } else {
                 setError('Please drop an image or video file.')
                 setPreview(null)
-                onFileSelect(null)
+                onChange(undefined)
                 setFileType(null)
             }
         }
@@ -67,7 +67,7 @@ export const FileUpload: FC<FileUploadProps> = ({ onFileSelect, initialPreview }
     const handleDelete = () => {
         setPreview(null)
         setError(null)
-        onFileSelect(null)
+        onChange(undefined)
         setFileType(null)
         if (fileInputRef.current) {
             fileInputRef.current.value = ''

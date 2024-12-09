@@ -1,12 +1,11 @@
 import {notFound} from 'next/navigation'
-import image from "@/image.png"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
-import {events} from "@/app/types/SocietyEvent";
 import Image from "next/image";
+import {getEventById} from "@/app/api/events/rest";
 
-export default function EventPage({params}: { params: { id: string } }) {
-    const event = events.find(e => e.id.toString() === params.id)
+export default async function EventPage({params}: { params: { id: string } }) {
+    const event = await getEventById(params.id);
 
     if (!event) {
         notFound()
@@ -18,7 +17,9 @@ export default function EventPage({params}: { params: { id: string } }) {
                 <CardHeader>
                     <div className="hero min-h-screen">
                         <Image
-                            src={image}
+                            src={event.filePath}
+                            width={100}
+                            height={100}
                             alt={event.name}
                             fill={false}
                             className="rounded-lg object-cover w-full h-full"
@@ -36,7 +37,7 @@ export default function EventPage({params}: { params: { id: string } }) {
                 <CardContent>
                     <p className="text-muted-foreground mb-2">{event.description}</p>
                     <p className="font-semibold">Location: {event.location}</p>
-                    <p className="font-semibold">Price: ${event.price}</p>
+                    <p className="font-semibold">Price: £{event.price}</p>
                     <p className="text-sm text-muted-foreground">Tickets left: {event.ticketsLeft}</p>
                 </CardContent>
                 <CardFooter>

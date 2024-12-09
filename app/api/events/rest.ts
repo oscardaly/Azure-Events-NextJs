@@ -1,23 +1,95 @@
-// //A function to submit a new asset to the REST endpoint
-// function submitNewAsset(){
-// //Construct JSON Object for new item
-//     var subObj = {
-//         AssetLabel: $('#AssetLabel').val(),
-//         Cost: $('#Cost').val(),
-//         AssetType: $('#AssetType').val(),
-//         NameOfOwner: $('#NameOfOwner').val(),
-//         AddressLine1: $('#AddressLine1').val(),
-//         AddressLine2: $('#AddressLine2').val(),
-//         Note: $('#Note').val()
-//     }
-// //Convert to a JSON String
-//     subObj = JSON.stringify(subObj);
-// //Post the JSON string to the endpoint, note the need to set the content type header
-//     $.post({
-//         url: CIAURI,
-//         data: subObj,
-//         contentType: 'application/json; charset=utf-8'
-//     }).done(function (response) {
-//         getAssetList();
-//     });
-// }
+import {SocietyEvent} from "@/app/types/SocietyEvent";
+import {DELETE_EVENT_BY_ID_API, GET_EVENT_BY_ID_API, GET_EVENTS_API, UPDATE_EVENTS_API} from "@/env";
+
+export const prepareBase64Content = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64String = reader.result as string;
+            const base64Content = base64String.split(",")[1];
+            resolve(base64Content);
+        };
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+    });
+};
+
+export const updateEvent = async (event: SocietyEvent): Promise<string> => {
+    try {
+        const response = await fetch(UPDATE_EVENTS_API, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(event),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error sending request:', error);
+        throw new Error('Failed to send request');
+    }
+};
+
+export const getEvents = async (): Promise<SocietyEvent[]> => {
+    try {
+        const response = await fetch(GET_EVENTS_API, {
+            method: 'GET',
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return JSON.parse(await response.text());
+    } catch (error) {
+        console.error('Error sending request:', error);
+        throw new Error('Failed to send request');
+    }
+};
+
+export const getEventById = async (eventId: string): Promise<SocietyEvent> => {
+    try {
+        const response = await fetch(GET_EVENT_BY_ID_API, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-event-id': eventId,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return JSON.parse(await response.text());
+    } catch (error) {
+        console.error('Error sending request:', error);
+        throw new Error('Failed to send request');
+    }
+};
+
+export const deleteEventById = async (eventId: string): Promise<SocietyEvent> => {
+    try {
+        const response = await fetch(DELETE_EVENT_BY_ID_API, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-event-id': eventId
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return JSON.parse(await response.text());
+    } catch (error) {
+        console.error('Error sending request:', error);
+        throw new Error('Failed to send request');
+    }
+};
