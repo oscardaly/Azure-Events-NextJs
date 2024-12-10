@@ -9,6 +9,7 @@ export interface SocietyEvent {
     ticketsLeft: number;
     location: string;
     description: string;
+    file?: string;
     filePath: string;
     fileLocator: string;
     questions: string[];

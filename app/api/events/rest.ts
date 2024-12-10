@@ -1,5 +1,10 @@
 import {SocietyEvent} from "@/app/types/SocietyEvent";
-import {DELETE_EVENT_BY_ID_API, GET_EVENT_BY_ID_API, GET_EVENTS_API, UPDATE_EVENTS_API} from "@/env";
+import {
+    DELETE_EVENT_BY_ID_API,
+    GET_EVENT_BY_ID_API,
+    GET_EVENTS_API,
+    UPDATE_EVENTS_API
+} from "@/env";
 
 export const prepareBase64Content = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -33,6 +38,10 @@ export const updateEvent = async (event: SocietyEvent): Promise<string> => {
         console.error('Error sending request:', error);
         throw new Error('Failed to send request');
     }
+};
+
+export const updateEventTicketsRemaining = async (event: SocietyEvent): Promise<string> => {
+    return await updateEvent(event);
 };
 
 export const getEvents = async (): Promise<SocietyEvent[]> => {
@@ -73,13 +82,13 @@ export const getEventById = async (eventId: string): Promise<SocietyEvent> => {
     }
 };
 
-export const deleteEventById = async (eventId: string): Promise<SocietyEvent> => {
+export const deleteEventById = async (eventId: number): Promise<SocietyEvent> => {
     try {
         const response = await fetch(DELETE_EVENT_BY_ID_API, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'x-event-id': eventId
+                'x-event-id': eventId.toString()
             },
         });
 
@@ -93,3 +102,16 @@ export const deleteEventById = async (eventId: string): Promise<SocietyEvent> =>
         throw new Error('Failed to send request');
     }
 };
+
+
+export async function urlToFile(url: string, filename: string): Promise<File> {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch image. Status: ${response.status}`);
+    }
+
+    const contentType = response.headers.get("Content-Type") || "application/octet-stream";
+    const blob = await response.blob();
+    return new File([blob], filename, { type: contentType });
+}

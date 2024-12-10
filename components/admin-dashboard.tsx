@@ -13,6 +13,7 @@ import Link from "next/link";
 import {SignOutButton} from "@/components/sign-out-button";
 import {deleteEventById, getEvents, updateEvent} from "@/app/api/events/rest";
 import {Ticket} from "@/app/types/Ticket";
+import {deleteTicketById} from "@/app/api/tickets/rest";
 
 interface AdminDashboardProps {
     initialEvents: SocietyEvent[]
@@ -28,6 +29,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, initial
     const [isAddEventOpen, setIsAddEventOpen] = useState(false);
     const [isEditEventOpen, setIsEditEventOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isDeleteTicketModalOpen, setIsDeleteTicketModalOpen] = useState(false);
 
     const defaultEvent: SocietyEvent = {
         id: 12345,
@@ -78,9 +80,14 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, initial
     }
 
     const handleDeleteEvent = async (id: number) => {
-        await deleteEventById(id.toString());
+        await deleteEventById(id);
         setEvents(await getEvents());
         setIsDeleteModalOpen(false);
+    }
+
+    const handleDeleteTicket = async (id: string) => {
+        await deleteTicketById(id);
+        setIsDeleteTicketModalOpen(false);
     }
 
     const handleShareEvent = (event: SocietyEvent) => {
@@ -93,8 +100,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, initial
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
             <SignOutButton/>
-            <Button onClick={() => setIsAddEventOpen(true)} className="mb-4">Add New Event</Button>
-
+            <Button onClick={() => setIsAddEventOpen(true)} className="ml-4 mb-4">Add New Event</Button>
             <Dialog open={isAddEventOpen} onOpenChange={setIsAddEventOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -185,7 +191,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, initial
                     </Table>
                 </CardContent>
             </Card>
-            <Card className="mt-10">
+            <Card className="mt-4">
                 <CardHeader>
                     <CardTitle>Tickets List</CardTitle>
                     <CardDescription>Manage your Tickets</CardDescription>
@@ -198,6 +204,7 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, initial
                                 <TableHead>Email</TableHead>
                                 <TableHead>Event Name</TableHead>
                                 <TableHead>Event Date</TableHead>
+                                <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -207,6 +214,28 @@ export const AdminDashboard: FC<AdminDashboardProps> = ({ initialEvents, initial
                                     <TableCell>{ticket.userEmail}</TableCell>
                                     <TableCell>{ticket.eventName}</TableCell>
                                     <TableCell>{ticket.eventDate}</TableCell>
+                                    <TableCell>
+                                        <div className="flex space-x-2">
+                                            <Dialog open={isDeleteTicketModalOpen} onOpenChange={setIsDeleteTicketModalOpen}>
+                                                <DialogTrigger asChild>
+                                                    <Button variant="destructive">Delete</Button>
+                                                </DialogTrigger>
+                                                <DialogContent>
+                                                    <DialogHeader>
+                                                        <DialogTitle>Are you sure?</DialogTitle>
+                                                        <DialogDescription>
+                                                            This action cannot be undone. This will permanently delete this ticket.                                                           the event.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <DialogFooter>
+                                                        <Button variant="outline" onClick={() => setIsDeleteTicketModalOpen(false)}>Cancel</Button>
+                                                        <Button variant="destructive"
+                                                                onClick={() => handleDeleteTicket(ticket.id)}>Delete</Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

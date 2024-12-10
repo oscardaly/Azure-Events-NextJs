@@ -121,7 +121,7 @@ export const EventForm: FC<EventFormProps> = ({ isEditing, event, setEditingEven
                     if (file)
                         fileAsBase64 = await prepareBase64Content(file);
 
-                    handleInputChange('filePath', fileAsBase64);
+                    handleInputChange('file', fileAsBase64);
                 }}/>
             </div>
             <div className="flex flex-col space-y-1.5 col-span-4">

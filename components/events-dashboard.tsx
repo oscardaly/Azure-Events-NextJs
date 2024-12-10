@@ -28,6 +28,15 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import Image from "next/image"
+import {
+  deleteEventById,
+  getEvents,
+  prepareBase64Content,
+  updateEvent,
+  urlToFile
+} from "@/app/api/events/rest";
+import {createTicket, sendEmailConfirmation} from "@/app/api/tickets/rest";
+import {v4 as uuidv4} from 'uuid';
 
 // Define types for basket and ticket items
 interface BasketItem {
@@ -45,11 +54,12 @@ interface Ticket {
 }
 
 interface EventsDashboardProps {
-  events: SocietyEvent[]
+  initialEvents: SocietyEvent[]
 }
 
-export const EventsDashboard: FC<EventsDashboardProps> = ({ events }) => {
+export const EventsDashboard: FC<EventsDashboardProps> = ({ initialEvents }) => {
   const [basket, setBasket] = useState<BasketItem[]>([])
+  const [events, setEvents] = useState<SocietyEvent[]>(initialEvents);
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [email, setEmail] = useState('')
@@ -164,6 +174,36 @@ export const EventsDashboard: FC<EventsDashboardProps> = ({ events }) => {
   }
 
   const totalPrice = basket.reduce((total, item) => total + item.price * item.quantity, 0)
+
+  const onCompletePurchase = async () => {
+    setLoading(true);
+    basket.map(async (item) => {
+      const event = events.find(event => event.id === item.eventId)
+
+      if (event) {
+        const file = await urlToFile(event.filePath, "image.jpg");
+        event.file = await prepareBase64Content(file);
+        event.ticketsLeft -= 1;
+
+        try {
+          await deleteEventById(event.id);
+        }
+        catch {}
+
+        await updateEvent(event);
+        const ticket = await createTicket({
+          id: uuidv4(),
+          eventName: event.name,
+          eventDate: event.date,
+          userEmail: email
+        });
+        await sendEmailConfirmation(ticket);
+      }
+    });
+
+    setEvents(await getEvents());
+    setLoading(false);
+  }
 
   return (
       <div className="container mx-auto p-4">
@@ -305,7 +345,7 @@ export const EventsDashboard: FC<EventsDashboardProps> = ({ events }) => {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button type="submit">Complete Purchase</Button>
+                      <Button onClick={() => onCompletePurchase()} type="submit">Complete Purchase</Button>
                     </DialogFooter>
                   </form>
                 </DialogContent>

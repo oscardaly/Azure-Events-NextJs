@@ -1,27 +1,27 @@
 import {SocietyEvent} from "@/app/types/SocietyEvent";
 import {
-    DELETE_EVENT_BY_ID_API,
+    CREATE_TICKET_API,
+    DELETE_TICKET_BY_ID_API,
     GET_TICKET_BY_ID,
-    GET_TICKETS_API,
-    UPDATE_EVENTS_API
+    GET_TICKETS_API, SEND_EMAIL_CONFIRMATION_API,
 } from "@/env";
 import {Ticket} from "@/app/types/Ticket";
 
-export const updateEvent = async (event: SocietyEvent): Promise<string> => {
+export const createTicket = async (ticket: Ticket): Promise<Ticket> => {
     try {
-        const response = await fetch(UPDATE_EVENTS_API, {
+        const response = await fetch(CREATE_TICKET_API, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(event),
+            body: JSON.stringify(ticket),
         });
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        return JSON.parse(await response.text());
     } catch (error) {
         console.error('Error sending request:', error);
         throw new Error('Failed to send request');
@@ -66,13 +66,34 @@ export const getTicketById = async (ticketId: string): Promise<Ticket> => {
     }
 };
 
-export const deleteEventById = async (eventId: string): Promise<SocietyEvent> => {
+export const sendEmailConfirmation = async (ticket: Ticket): Promise<Ticket> => {
     try {
-        const response = await fetch(DELETE_EVENT_BY_ID_API, {
+        const response = await fetch(SEND_EMAIL_CONFIRMATION_API, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(ticket),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return JSON.parse(await response.text());
+    } catch (error) {
+        console.error('Error sending request:', error);
+        throw new Error('Failed to send request');
+    }
+};
+
+export const deleteTicketById = async (ticketId: string): Promise<SocietyEvent> => {
+    try {
+        const response = await fetch(DELETE_TICKET_BY_ID_API, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'x-event-id': eventId
+                'x-ticket-id': ticketId
             },
         });
 
